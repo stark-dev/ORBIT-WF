@@ -2,11 +2,11 @@
 
 #define COLORS PBL_IF_COLOR_ELSE(true, false)
 #define ANTIALIASING true
-#define RADIUS_MARGIN 40
-#define DIAL_DOTS_MARGIN 20
-#define INNER_DIAL_MARGIN 40
-#define BATT_DOTS_MARGIN 50
-#define HAND_RADIUS 8
+#define RADIUS_MARGIN PBL_IF_ROUND_ELSE(40, 20)
+#define DIAL_DOTS_MARGIN PBL_IF_ROUND_ELSE(20, 17)
+#define INNER_DIAL_MARGIN PBL_IF_ROUND_ELSE(40, 35)
+#define BATT_DOTS_MARGIN PBL_IF_ROUND_ELSE(50, 45)
+#define HAND_RADIUS PBL_IF_ROUND_ELSE(8, 7)
 #define DOT_L 3
 #define DOT_M 2
 #define DOT_S 1
@@ -261,7 +261,6 @@ static void radius_update(Animation *anim, AnimationProgress dist_normalized) {
   s_dial_dots_radius = anim_percentage(dist_normalized, s_dial_dots_radius_f);
   s_inner_dial_radius = anim_percentage(dist_normalized, s_inner_dial_radius_f);
   s_bt_conn_dots_radius = anim_percentage(dist_normalized, s_bt_conn_dots_radius_f);
-  s_hand_radius = anim_percentage(dist_normalized, s_hand_radius_f);
 
   layer_mark_dirty(s_canvas_layer);
 }
@@ -269,6 +268,7 @@ static void radius_update(Animation *anim, AnimationProgress dist_normalized) {
 static void hands_update(Animation *anim, AnimationProgress dist_normalized) {
   s_anim_time.hours = anim_percentage(dist_normalized, hours_to_minutes(s_last_time.hours));
   s_anim_time.minutes = anim_percentage(dist_normalized, s_last_time.minutes);
+  s_hand_radius = anim_percentage(dist_normalized, s_hand_radius_f);
 
   layer_mark_dirty(s_canvas_layer);
 }
@@ -308,7 +308,7 @@ static void create_canvas() {
   s_inner_dial_radius_f = s_gray_dial_radius_f - INNER_DIAL_MARGIN;
   //set battery dots width
   s_bt_conn_dots_radius_f = s_gray_dial_radius_f - BATT_DOTS_MARGIN;
-  //set hand lenght
+  //set hand radius
   s_hand_radius_f = HAND_RADIUS;
 
   s_canvas_layer = layer_create(bounds);
@@ -320,8 +320,8 @@ static void create_canvas() {
   layer_add_child(window_layer, s_date_layer);
 
   s_num_label = text_layer_create(PBL_IF_ROUND_ELSE(
-    GRect(130, 80, 18, 20),
-    GRect(102, 75, 18, 20)));
+    GRect(133, 80, 18, 20),
+    GRect(108, 75, 18, 20)));
   layer_add_child(s_date_layer, text_layer_get_layer(s_num_label));
   
 }
