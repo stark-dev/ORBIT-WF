@@ -132,7 +132,7 @@ static void update_proc(Layer *layer, GContext *ctx) {
 
   // Gray clockface
   graphics_context_set_stroke_width(ctx, DOT_L);
-  graphics_context_set_stroke_color(ctx, GColorDarkGray);
+  graphics_context_set_stroke_color(ctx, GColorLightGray);
   graphics_draw_circle(ctx, s_center, s_gray_dial_radius);
   
   //dial dots
@@ -191,18 +191,20 @@ static void update_proc(Layer *layer, GContext *ctx) {
   for(int i=0; i<5; i++){
     // Plot dots
     dot_centre = (GPoint) {
-      .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * (10 + i*10) / 60) * (int32_t)(s_bt_conn_dots_radius) / TRIG_MAX_RATIO) + s_center.x,
-      .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * (10 + i*10) / 60) * (int32_t)(s_bt_conn_dots_radius) / TRIG_MAX_RATIO) + s_center.y,
+      .x = (int16_t)(sin_lookup(TRIG_MAX_ANGLE * (5 + i*6) / 60) * (int32_t)(s_bt_conn_dots_radius) / TRIG_MAX_RATIO) + s_center.x,
+      .y = (int16_t)(-cos_lookup(TRIG_MAX_ANGLE * (5 + i*6) / 60) * (int32_t)(s_bt_conn_dots_radius) / TRIG_MAX_RATIO) + s_center.y,
     };
   
     // Draw dots
-    if(i > ((s_battery_level + 10)/20 - 1)){
-      graphics_context_set_fill_color(ctx, GColorDarkGreen);
+    if(i > ((s_battery_level - 10)/20)){
+      graphics_context_set_fill_color(ctx, GColorKellyGreen);
       graphics_fill_circle(ctx, dot_centre, DOT_M);
     }
     else {
       if(s_charging)
         graphics_context_set_fill_color(ctx, GColorYellow);
+      else if (s_battery_level <= 10)
+        graphics_context_set_fill_color(ctx, GColorRed);
       else
         graphics_context_set_fill_color(ctx, GColorGreen);
       graphics_fill_circle(ctx, dot_centre, DOT_L);
@@ -212,7 +214,7 @@ static void update_proc(Layer *layer, GContext *ctx) {
   // Bluetooth dot
   dot_centre = (GPoint) {
     .x = s_center.x,
-    .y = -s_bt_conn_dots_radius + s_center.y,
+    .y = s_center.y,
   };
   
   if(s_bt_connected){
@@ -226,7 +228,7 @@ static void update_proc(Layer *layer, GContext *ctx) {
   
   // Silent mode dot
   GPoint dot_centre = (GPoint) {
-    .x = s_center.x,
+    .x = s_center.x - s_bt_conn_dots_radius,
     .y = s_center.y,
   };
   
